@@ -3,14 +3,13 @@ WorkflowExecutor - AI Agent Step
 Coordinates workflow execution across multiple steps
 """
 
-def config():
-    return {
-        'name': 'WorkflowExecutor',
-        'type': 'event',
-        'subscribes': ['workflow-execute'],
-        'emits': ['workflow-execution-completed', 'workflow-execution-failed'],
-        'flows': ['ai-agents', 'workflow-execution']
-    }
+config = {
+    'name': 'WorkflowExecutor',
+    'type': 'event',
+    'subscribes': ['workflow-execute'],
+    'emits': ['workflow-execution-completed', 'workflow-execution-failed'],
+    'flows': ['ai-agents', 'workflow-execution']
+}
 
 async def handler(event, context):
     """
@@ -27,10 +26,7 @@ async def handler(event, context):
         input_data = event.get('data', {}).get('input') or event.get('input') or {}
         
         if logger:
-            logger.info(f'Executing workflow: {workflow_name}', {
-                'executionId': execution_id,
-                'workflowId': workflow_id
-            })
+            logger.info(f'Executing workflow: {workflow_name} (ID: {workflow_id}, Execution: {execution_id})')
         
         # Get workflow from state
         workflows = await state.get('default', 'workflows') if state else []
@@ -64,10 +60,7 @@ async def handler(event, context):
             step_type = step.get('type', 'unknown')
             
             if logger:
-                logger.debug(f'Executing step {i+1}/{len(steps)}: {step_id}', {
-                    'stepType': step_type,
-                    'executionId': execution_id
-                })
+                logger.debug(f'Executing step {i+1}/{len(steps)}: {step_id} (type: {step_type}, execution: {execution_id})')
             
             # Simulate step execution
             step_result = {
@@ -124,11 +117,7 @@ async def handler(event, context):
                     logger.warn(f'Failed to emit workflow-execution-completed event: {str(e)}')
         
         if logger:
-            logger.info(f'Workflow execution completed', {
-                'executionId': execution_id,
-                'workflowId': workflow_id,
-                'stepsCompleted': len(execution_results)
-            })
+            logger.info(f'Workflow execution completed: {execution_id} (workflow: {workflow_id}, steps: {len(execution_results)})')
         
         return {
             'executionId': execution_id,

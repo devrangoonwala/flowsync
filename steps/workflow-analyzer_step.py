@@ -3,14 +3,13 @@ WorkflowAnalyzer - AI Agent Step
 Analyzes workflow structure and provides optimization recommendations
 """
 
-def config():
-    return {
-        'name': 'WorkflowAnalyzer',
-        'type': 'event',
-        'subscribes': ['workflow-created'],
-        'emits': ['workflow-analyzed'],
-        'flows': ['ai-agents', 'workflow-optimization']
-    }
+config = {
+    'name': 'WorkflowAnalyzer',
+    'type': 'event',
+    'subscribes': ['workflow-created'],
+    'emits': ['workflow-analyzed'],
+    'flows': ['ai-agents', 'workflow-optimization']
+}
 
 async def handler(event, context):
     """
@@ -25,7 +24,7 @@ async def handler(event, context):
         workflow_name = event.get('data', {}).get('workflowName') or event.get('workflowName')
         
         if logger:
-            logger.info(f'Analyzing workflow: {workflow_name}', {'workflowId': workflow_id})
+            logger.info(f'Analyzing workflow: {workflow_name} (ID: {workflow_id})')
         
         # Get workflow from state
         workflows = await state.get('default', 'workflows') if state else []
@@ -97,10 +96,7 @@ async def handler(event, context):
                     logger.warn(f'Failed to emit workflow-analyzed event: {str(e)}')
         
         if logger:
-            logger.info(f'Workflow analysis completed', {
-                'workflowId': workflow_id,
-                'recommendationsCount': len(analysis['recommendations'])
-            })
+            logger.info(f'Workflow analysis completed: {workflow_id}, recommendations: {len(analysis["recommendations"])}')
         
         return analysis
         

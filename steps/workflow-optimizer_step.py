@@ -3,14 +3,13 @@ WorkflowOptimizer - AI Agent Step
 Applies optimizations based on workflow analysis
 """
 
-def config():
-    return {
-        'name': 'WorkflowOptimizer',
-        'type': 'event',
-        'subscribes': ['workflow-analyzed'],
-        'emits': ['workflow-optimized'],
-        'flows': ['ai-agents', 'workflow-optimization']
-    }
+config = {
+    'name': 'WorkflowOptimizer',
+    'type': 'event',
+    'subscribes': ['workflow-analyzed'],
+    'emits': ['workflow-optimized'],
+    'flows': ['ai-agents', 'workflow-optimization']
+}
 
 async def handler(event, context):
     """
@@ -25,7 +24,7 @@ async def handler(event, context):
         analysis = event.get('data', {}).get('analysis') or event.get('analysis')
         
         if logger:
-            logger.info(f'Optimizing workflow', {'workflowId': workflow_id})
+            logger.info(f'Optimizing workflow: {workflow_id}')
         
         if not analysis:
             if logger:
@@ -106,10 +105,7 @@ async def handler(event, context):
                     logger.warn(f'Failed to emit workflow-optimized event: {str(e)}')
         
         if logger:
-            logger.info(f'Workflow optimization completed', {
-                'workflowId': workflow_id,
-                'optimizationsApplied': len(optimizations_applied)
-            })
+            logger.info(f'Workflow optimization completed: {workflow_id}, optimizations: {len(optimizations_applied)}')
         
         return optimization_result
         
