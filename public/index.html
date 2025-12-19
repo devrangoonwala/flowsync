@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlowSync - Workflow Orchestration Platform</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>🚀 FlowSync</h1>
+                <p class="subtitle">Workflow Orchestration Platform</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-primary" onclick="showCreateWorkflowModal()">
+                    ➕ Create Workflow
+                </button>
+                <button class="btn btn-secondary" onclick="refreshData()">
+                    🔄 Refresh
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="totalWorkflows">0</div>
+                        <div class="stat-label">Total Workflows</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⚡</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="runningExecutions">0</div>
+                        <div class="stat-label">Running Executions</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="successRate">0%</div>
+                        <div class="stat-label">Success Rate</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📈</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="totalExecutions">0</div>
+                        <div class="stat-label">Total Executions</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab-btn active" onclick="showTab('workflows')">📋 Workflows</button>
+                <button class="tab-btn" onclick="showTab('executions')">⚡ Executions</button>
+                <button class="tab-btn" onclick="showTab('metrics')">📊 Metrics</button>
+            </div>
+
+            <!-- Workflows Tab -->
+            <div id="workflows-tab" class="tab-content active">
+                <div class="section-header">
+                    <h2>Your Workflows</h2>
+                </div>
+                <div id="workflows-list" class="workflows-grid">
+                    <div class="empty-state">
+                        <div class="empty-icon">📝</div>
+                        <p>No workflows yet. Create your first workflow to get started!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Executions Tab -->
+            <div id="executions-tab" class="tab-content">
+                <div class="section-header">
+                    <h2>Recent Executions</h2>
+                </div>
+                <div id="executions-list" class="executions-list">
+                    <div class="empty-state">
+                        <div class="empty-icon">⚡</div>
+                        <p>No executions yet. Execute a workflow to see it here!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Metrics Tab -->
+            <div id="metrics-tab" class="tab-content">
+                <div class="section-header">
+                    <h2>System Metrics</h2>
+                </div>
+                <div id="metrics-content" class="metrics-content">
+                    <div class="loading">Loading metrics...</div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Create Workflow Modal -->
+    <div id="create-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create New Workflow</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="workflow-form" onsubmit="createWorkflow(event)">
+                    <div class="form-group">
+                        <label>Workflow Name *</label>
+                        <input type="text" id="workflow-name" required placeholder="e.g., Data Processing Pipeline">
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="workflow-description" rows="3" placeholder="Describe what this workflow does..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Steps</label>
+                        <div id="steps-container">
+                            <div class="step-item">
+                                <input type="text" placeholder="Step ID (e.g., step-1)" class="step-id" required>
+                                <select class="step-type" required>
+                                    <option value="">Select type...</option>
+                                    <option value="api">API</option>
+                                    <option value="job">Background Job</option>
+                                    <option value="ai">AI Agent</option>
+                                    <option value="event">Event</option>
+                                    <option value="scheduled">Scheduled</option>
+                                </select>
+                                <input type="text" placeholder="Config (JSON)" class="step-config" value="{}">
+                                <button type="button" class="btn-remove" onclick="removeStep(this)">✕</button>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-secondary" onclick="addStep()">➕ Add Step</button>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Create Workflow</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Execute Workflow Modal -->
+    <div id="execute-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Execute Workflow</h2>
+                <button class="close-btn" onclick="closeExecuteModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="execute-form" onsubmit="executeWorkflow(event)">
+                    <input type="hidden" id="execute-workflow-id">
+                    <div class="form-group">
+                        <label>Input Data (JSON)</label>
+                        <textarea id="execute-input" rows="6" placeholder='{"data": "your input here"}'>{}</textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeExecuteModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Execute</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
+

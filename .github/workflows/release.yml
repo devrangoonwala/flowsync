@@ -1,0 +1,43 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Use Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Build project
+      run: npm run build
+    
+    - name: Create Release Archive
+      run: |
+        mkdir -p dist-release
+        cp -r steps dist-release/
+        cp package.json dist-release/
+        cp motia.config.ts dist-release/
+        cp tsconfig.json dist-release/
+        cp requirements.txt dist-release/
+        cp README.md dist-release/
+        tar -czf flowsync-release.tar.gz -C dist-release .
+    
+    - name: Upload Release Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: flowsync-release
+        path: flowsync-release.tar.gz
+

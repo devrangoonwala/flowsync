@@ -1,0 +1,35 @@
+{
+  "name": "flowsync",
+  "version": "1.0.0",
+  "description": "AI-Powered Multi-Agent Workflow Orchestration Platform built on Motia",
+  "type": "module",
+  "scripts": {
+    "dev": "motia dev",
+    "build": "motia build",
+    "start": "motia start",
+    "serve-frontend": "npx http-server public -p 8080 -c-1"
+  },
+  "dependencies": {
+    "motia": "^0.17.6-beta.187",
+    "zod": "^3.24.4",
+    "@motiadev/core": "0.17.6-beta.187",
+    "@motiadev/plugin-logs": "0.17.6-beta.187",
+    "@motiadev/plugin-states": "0.17.6-beta.187",
+    "@motiadev/plugin-endpoint": "0.17.6-beta.187",
+    "@motiadev/plugin-observability": "0.17.6-beta.187",
+    "@motiadev/plugin-bullmq": "0.17.6-beta.187"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3",
+    "@types/node": "^20.0.0"
+  },
+  "keywords": [
+    "motia",
+    "workflow",
+    "ai",
+    "automation",
+    "orchestration"
+  ],
+  "author": "",
+  "license": "MIT"
+}
